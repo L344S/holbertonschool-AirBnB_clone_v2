@@ -146,6 +146,8 @@ class HBNBCommand(cmd.Cmd):
                         value = value[1:-1]
                         # replace the underscore with a space
                         value = value.replace('_', ' ')
+                        # replace the backslash with a double quote
+                        value = value.replace('\\\"', '\"')
                     # if argument have a . :
                     elif '.' in value:
                         # convert the value to a float

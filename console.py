@@ -3,7 +3,7 @@
 import cmd
 import sys
 from models.base_model import BaseModel
-from models.__init__ import storage
+from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -157,7 +157,7 @@ class HBNBCommand(cmd.Cmd):
                         # convert the value to an integer
                         value = int(value)
                     # add the key and value to the parameter list
-                        setattr(new_instance, key, value)
+                    parameter_list[key] = value
                 except BaseException:
                     pass
 

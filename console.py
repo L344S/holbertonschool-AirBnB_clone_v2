@@ -19,16 +19,16 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+        'BaseModel': BaseModel, 'User': User, 'Place': Place,
+        'State': State, 'City': City, 'Amenity': Amenity,
+        'Review': Review
+    }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
-            }
+        'number_rooms': int, 'number_bathrooms': int,
+        'max_guest': int, 'price_by_night': int,
+        'latitude': float, 'longitude': float
+    }
 
     def preloop(self):
         """Prints if isatty is false"""
@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -114,17 +114,50 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
+        """ Create an object of any class with given parameters """
+        # parse args into classname (arg_classname) and the rest (arg_list)
+        arg_classname = args.split()[0]
+        arg_list = args.split()[1:]
+        parameter_list = {}
+        # if the user didn't give a classname, print error
+        if not arg_classname:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        # if the user gave a classname that doesn't exist, print error
+        elif arg_classname not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        # if the user gave a classname that exists, create an object of that
+        else:
+            # create a new instance of the class
+            new_instance = HBNBCommand.classes[arg_classname](**parameter_list)
+            # save the new instance in json file
+            storage.save()
+            # print the id of the new instance
+            print(new_instance.id)
+
+            for arg in arg_list:
+                try:
+                    # split the argument into key and value
+                    key, value = arg.split('=')
+                    # if argument is a string :
+                    if value[0] == '"' and value[-1] == '"':
+                        # remove the quotes
+                        value = value[1:-1]
+                        # replace the underscore with a space
+                        value = value.replace('_', ' ').
+                    # if argument have a . :
+                    elif '.' in value:
+                        # convert the value to a float
+                        value = float(value)
+                    # if argument is a number :
+                    else:
+                        # convert the value to an integer
+                        value = int(value)
+                    # add the key and value to the parameter list
+                        setattr(new_instance, key, value)
+                except BaseException:
+                    pass
 
     def help_create(self):
         """ Help information for the create method """
@@ -187,7 +220,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -319,6 +352,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

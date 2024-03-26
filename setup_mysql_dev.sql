@@ -1,3 +1,4 @@
+-- SQLBook: Code
 #!/bin/bash
 -- script that prepares a MySQL server for the project
 -- create DB named 'hbnb_dev_db' and user 'hbnb_dev_db'

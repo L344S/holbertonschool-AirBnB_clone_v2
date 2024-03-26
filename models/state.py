@@ -10,8 +10,8 @@ sto = os.getenv("HBNB_TYPE_STORAGE")
 
 
 class State(BaseModel):
-
     """ State class """
+
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
     if sto == 'db':
@@ -20,6 +20,7 @@ class State(BaseModel):
     else:
         @property
         def cities(self):
+            """commentaire qu'il manque"""
             from models import storage
             from models import City
             city_list = []

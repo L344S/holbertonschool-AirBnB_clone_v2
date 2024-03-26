@@ -33,9 +33,9 @@ class DBStorage:
             Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
-        dictionary = {}
+        """Method to query all objects from the current database session"""
+        dictionary = []
         classes = [User, State, City, Amenity, Place, Review]
-
         if not cls:
             for x in classes:
                 for obj in self.__session.query(x).all():
@@ -51,8 +51,7 @@ class DBStorage:
 
     def new(self, obj):
         """Method to add the object to the current database session"""
-        if obj:
-            self.__session.add(obj)
+        self.__session.add(obj)
 
     def save(self):
         """Method to commit all changes of the current database"""
@@ -66,7 +65,7 @@ class DBStorage:
     def reload(self):
         """Create all tables and the current database session"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine,
-                                       expire_on_commit=False)
+        session_factory = sessionmaker(
+            bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()

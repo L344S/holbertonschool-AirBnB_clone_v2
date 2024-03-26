@@ -19,18 +19,15 @@ class DBStorage:
 
     def __init__(self):
         """init method to create a new instance of DBStorage"""
-        MYSQL_USER = os.getenv('HBNB_MYSQL_USER')
-        MYSQL_PWD = os.getenv('HBNB_MYSQL_PWD')
-        MYSQL_HOST = os.getenv('HBNB_MYSQL_HOST')
-        MYSQL_DB = os.getenv('HBNB_MYSQL_DB')
+        MYSQL_USER = os.getenv("HBNB_MYSQL_USER")
+        MYSQL_PWD = os.getenv("HBNB_MYSQL_PWD")
+        MYSQL_HOST = os.getenv("HBNB_MYSQL_HOST")
+        MYSQL_DB = os.getenv("HBNB_MYSQL_DB")
         MYSQL_ENV = os.getenv("HBNB_ENV")
-
-        self.__engine = create_engine(
-            "mysql+mysqldb://{}:{}@{}:3306/{}".format(
-                MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB),
-            pool_pre_ping=True)
+        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(
+                        MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB), pool_pre_ping=True)
         if MYSQL_ENV == "test":
-            Base.metadata.drop_all(bind=self.__engine)
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """Method to query all objects from the current database session"""

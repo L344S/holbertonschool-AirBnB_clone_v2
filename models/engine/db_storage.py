@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 
-class DBStorage:
+class DBStorage():
     """New engine DBStorage"""
     __engine = None
     __session = None

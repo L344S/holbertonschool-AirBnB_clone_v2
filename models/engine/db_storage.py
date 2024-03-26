@@ -24,6 +24,7 @@ class DBStorage():
         MYSQL_HOST = os.getenv("HBNB_MYSQL_HOST")
         MYSQL_DB = os.getenv("HBNB_MYSQL_DB")
         MYSQL_ENV = os.getenv("HBNB_ENV")
+
         self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(
             MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB), pool_pre_ping=True)
 
@@ -32,8 +33,9 @@ class DBStorage():
 
     def all(self, cls=None):
         """Method to query all objects from the current database session"""
-        dictionary = {}
         classes = [User, State, City, Amenity, Place, Review]
+
+        dictionary = {}
         if not cls:
             for x in classes:
                 for obj in self.__session.query(x).all():

@@ -5,11 +5,10 @@ from models import state
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-# from sqlalchemy.ext.declarative import declarative_base
 
 
 class City(BaseModel, Base):
     """ The city class, contains state ID and name """
     __tablename__ = "cities"
     name = Column(String(128), nullable=False)
-    state_id = Column(String(60), nullable=False, Foreign_key=state.id)
+    state_id = Column(String(60), ForeignKey('state.id'), nullable=False)

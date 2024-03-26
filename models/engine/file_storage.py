@@ -9,13 +9,17 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """Returns a dictionary of models currently in storage"""
+        """Return a dictionary of all objects of a certain class
+        or all objects if no class is specified"""
         if cls:
             actual_dict = {}
+            # loop through all objects in __objects
             for key, value in FileStorage.__objects.items():
+                # if the class of the object is the same as the class
                 if cls == value.__class__:
                     actual_dict[key] = value
             return actual_dict
+        # if no class is specified, return all objects
         return FileStorage.__objects
 
     def new(self, obj):
@@ -24,11 +28,15 @@ class FileStorage:
 
     def save(self):
         """Saves storage dictionary to file"""
+        # open file.json in write mode
         with open(FileStorage.__file_path, 'w') as f:
             temp = {}
+            # copy all objects in __objects to temp
             temp.update(FileStorage.__objects)
+            # convert all objects in temp to dictionary format
             for key, val in temp.items():
                 temp[key] = val.to_dict()
+            # write temp to file.json
             json.dump(temp, f)
 
     def reload(self):
@@ -48,8 +56,11 @@ class FileStorage:
         }
         try:
             temp = {}
+            # open file.json in read mode
             with open(FileStorage.__file_path, 'r') as f:
+                # load data from file.json into temp
                 temp = json.load(f)
+                # for each key, val in temp create an object in __objects
                 for key, val in temp.items():
                     self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
@@ -60,6 +71,8 @@ class FileStorage:
         if not obj:
             return
         key = "{}.{}".format(obj.__class__.__name__, obj.id)
+        # if key exists in __objects, delete it
         if key in self.__objects:
             del self.__objects[key]
+        # save the changes
         self.save()

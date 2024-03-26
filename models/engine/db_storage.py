@@ -31,7 +31,7 @@ class DBStorage:
 
     def all(self, cls=None):
         """Method to query all objects from the current database session"""
-        dictionary = []
+        dictionary = {}
         classes = [User, State, City, Amenity, Place, Review]
         if not cls:
             for x in classes:

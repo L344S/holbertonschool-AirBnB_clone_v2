@@ -11,7 +11,7 @@ storage_type = os.getenv("HBNB_TYPE_STORAGE")
 
 
 class City(BaseModel, Base):
-    """ The city class, contains state ID and name """
+    """ The city class, contains state ID and namee """
     __tablename__ = "cities"
     name = Column(String(128), nullable=False)
     state_id = Column(String(60), ForeignKey('state.id'), nullable=False)

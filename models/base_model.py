@@ -15,17 +15,17 @@ class BaseModel:
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
-        """Instantiates a new model"""
+        """Instatntiates a new model"""
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         if kwargs:
-            dformat = "%Y-%m-%dT%H:%M:%S.%f"
+            kwargs.pop('__class__', None)
             for key, value in kwargs.items():
-                if key in ["created_at", "updated_at"]:
-                    setattr(self, key, datetime.strptime(value, dformat))
-                elif key != "__class__":
-                    setattr(self, key, value)
+                if key in ['created_at', 'updated_at'] and isinstance(
+                        value, str):
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                setattr(self, key, value)
 
     def __str__(self):
         """Returns a string representation of the instance"""
@@ -42,7 +42,7 @@ class BaseModel:
         storage.save()
 
     def to_dict(self):
-        """Convert instance into dict format"""
+        """Methode to return a dictionary representation of the instance"""
         dictionary = {}
         dictionary.update(self.__dict__)
         dictionary["__class__"] = self.__class__.__name__

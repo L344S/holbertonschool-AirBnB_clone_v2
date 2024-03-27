@@ -3,7 +3,7 @@
 import cmd
 import sys
 from models.base_model import BaseModel
-from models import storage
+from models.__init__ import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -114,28 +114,41 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Method to create a new object """
-        classname = args.split()[0]
-        line = args.split()[1:]
-        if not classname:
+        """ Create an object of any class with parameters"""
+        args_list = args.split(" ")
+        if not args_list[0]:
             print("** class name missing **")
             return
-        elif classname not in HBNBCommand.classes:
+        elif args_list[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        kwargs = {}
-        for attr in line:
-            key, value = attr.split("=", 1)
-            if value[0] == '"':
-                value = value.replace("_", " ").replace("\"", "")
-            elif "." in value:
-                value = float(value)
+        new_instance = HBNBCommand.classes[args_list[0]]()
+
+        """
+        split key_value in key and value and check if key has value
+        remove double quotes and replace spaces and quotes
+        """
+        for param in args_list[1:]:
+            key_value = param.split('=')
+            if len(key_value) != 2:
+                continue
+            key, value = key_value
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+                value = value.replace('_', ' ').replace('\\"', '"')
             else:
-                value = int(value)
-            kwargs[key] = value
-        new_instance = HBNBCommand.classes[classname](**kwargs)
+                try:
+                    if '.' in value:
+                        value = float(value)
+                    else:
+                        value = int(value)
+                except ValueError:
+                    continue
+            setattr(new_instance, key, value)
+
         new_instance.save()
         print(new_instance.id)
+        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -217,12 +230,12 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            objects = storage.all(args)  # Use class name string directly
         else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
+            objects = storage.all()
+
+        for obj in objects.values():
+            print_list.append(str(obj))
 
         print(print_list)
 

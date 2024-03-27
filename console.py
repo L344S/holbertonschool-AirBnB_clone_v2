@@ -114,52 +114,28 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class with given parameters """
-        # parse args into classname (arg_classname) and the rest (arg_list)
-        arg_classname = args.split()[0]
-        arg_list = args.split()[1:]
-        parameter_list = {}
-        # if the user didn't give a classname, print error
-        if not arg_classname:
+        """ Method to create a new object """
+        classname = args.split()[0]
+        line = args.split()[1:]
+        if not classname:
             print("** class name missing **")
             return
-        # if the user gave a classname that doesn't exist, print error
-        elif arg_classname not in HBNBCommand.classes:
+        elif classname not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        # if the user gave a classname that exists, create an object of that
-        else:
-            # create a new instance of the class
-            new_instance = HBNBCommand.classes[arg_classname](**parameter_list)
-            # save the new instance in json file
-            storage.save()
-            # print the id of the new instance
-            print(new_instance.id)
-
-            for arg in arg_list:
-                try:
-                    # split the argument into key and value
-                    key, value = arg.split('=')
-                    # if argument is a string :
-                    if value[0] == '"' and value[-1] == '"':
-                        # remove the quotes
-                        value = value[1:-1]
-                        # replace the underscore with a space
-                        value = value.replace('_', ' ')
-                        # replace the backslash with a double quote
-                        value = value.replace('\\\"', '\"')
-                    # if argument have a . :
-                    elif '.' in value:
-                        # convert the value to a float
-                        value = float(value)
-                    # if argument is a number :
-                    else:
-                        # convert the value to an integer
-                        value = int(value)
-                    # add the key and value to the parameter list
-                    parameter_list[key] = value
-                except BaseException:
-                    pass
+        kwargs = {}
+        for attr in line:
+            key, value = attr.split("=", 1)
+            if value[0] == '"':
+                value = value.replace("_", " ").replace("\"", "")
+            elif "." in value:
+                value = float(value)
+            else:
+                value = int(value)
+            kwargs[key] = value
+        new_instance = HBNBCommand.classes[classname](**kwargs)
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """

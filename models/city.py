@@ -17,5 +17,8 @@ class City(BaseModel, Base):
     state_id = Column(String(60), ForeignKey('state.id'), nullable=False)
     if storage_type == 'db':
         state = relationship("State", back_populates="cities")
-        places = relationship("Place", back_populates="cities", cascade="all"
-                          , passive_deletes=True)
+        places = relationship(
+            "Place",
+            back_populates="cities",
+            cascade="all",
+            passive_deletes=True)

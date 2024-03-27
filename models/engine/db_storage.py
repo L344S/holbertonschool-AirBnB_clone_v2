@@ -18,54 +18,69 @@ class DBStorage():
     __session = None
 
     def __init__(self):
-        """init method to create a new instance of DBStorage"""
-        MYSQL_USER = os.getenv("HBNB_MYSQL_USER")
-        MYSQL_PWD = os.getenv("HBNB_MYSQL_PWD")
-        MYSQL_HOST = os.getenv("HBNB_MYSQL_HOST")
-        MYSQL_DB = os.getenv("HBNB_MYSQL_DB")
-        MYSQL_ENV = os.getenv("HBNB_ENV")
+        """initialise the dbstorage"""
+        hbnb_usr = os.getenv("HBNB_MYSQL_USER")
+        hbnb_pwd = os.getenv("HBNB_MYSQL_PWD")
+        hbnb_host = os.getenv("HBNB_MYSQL_HOST", "localhost")
+        hbnb_db = os.getenv("HBNB_MYSQL_DB")
+        hbnb_env = os.getenv("HBNB_ENV")
 
-        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(
-            MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB), pool_pre_ping=True)
+        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}"
+                                      .format(hbnb_usr, hbnb_pwd,
+                                              hbnb_host, hbnb_db,
+                                              pool_pre_ping=True))
 
-        if MYSQL_ENV == "test":
+        if hbnb_env == 'test':
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """Method to query all objects from the current database session"""
-        classes = [User, State, City, Amenity, Place, Review]
+        """ Query all objects by class name,or all if cls=None"""
+        class_map = {
+            "User": User,
+            "Place": Place,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Review": Review
+        }
 
-        dictionary = {}
-        if not cls:
-            for x in classes:
-                for obj in self.__session.query(x).all():
-                    key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                    dictionary[key] = obj
-        else:
+        list_objects = {}
+        if cls:
             if isinstance(cls, str):
-                cls = classes.get(cls, None)
-            for obj in self.__session.query(cls).all():
-                key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                dictionary[key] = obj
-        return dictionary
+                cls = class_map.get(cls, None)
+                if cls is None:
+                    print("** class doesn't exist **")
+                    return list_objects
+            self.query_session(cls, list_objects)
+        else:
+            for cls_obj in class_map.values():
+                self.query_session(cls_obj, list_objects)
+        return list_objects
+
+    def query_session(self, cls, list_objects):
+        """handle the query and populate the dictionary,called by all"""
+        query_result = self.__session.query(cls).all()
+        for obj in query_result:
+            key = "{}.{}".format(cls.__name__, obj.id)
+            list_objects[key] = obj
 
     def new(self, obj):
-        """Method to add the object to the current database session"""
+        """Add the object to currend database session"""
         self.__session.add(obj)
 
     def save(self):
-        """Method to commit all changes of the current database"""
+        """ Commit all changes of the current database session"""
         self.__session.commit()
 
     def delete(self, obj=None):
-        """Method to delete obj from the current db session if not None"""
+        """ Delete from the current db session obj if not none"""
         if obj:
             self.__session.delete(obj)
 
     def reload(self):
-        """Create all tables and the current database session"""
+        """ Reload all tables from the db and recreate the session"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(
-            bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()

@@ -20,11 +20,16 @@ class State(BaseModel):
     else:
         @property
         def cities(self):
-            """commentaire qu'il manque"""
+            """Return the list of City instances with state.id equal to
+            current State.id for filestorage
+            """
             from models import storage
-            from models import City
-            city_list = []
-            for city in storage.all(City).values():
+            from models.city import City
+
+            state_cities_list = []
+            all_cities = storage.all(City)
+
+            for city in all_cities.values():
                 if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
+                    state_cities_list.append(city)
+            return state_cities_list

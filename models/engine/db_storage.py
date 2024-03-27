@@ -33,21 +33,20 @@ class DBStorage():
 
     def all(self, cls=None):
         """Method to query all objects from the current database session"""
-        classes = {"User": User, "State": State, "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
+        classes = [User, State, City, Amenity, Place, Review]
 
         dictionary = {}
         if not cls:
-            for cls in classes.values():
-                for obj in self.__session.query(cls).all():
+            for x in classes:
+                for obj in self.__session.query(x).all():
                     key = "{}.{}".format(obj.__class__.__name__, obj.id)
                     dictionary[key] = obj
         else:
             if isinstance(cls, str):
                 cls = classes.get(cls, None)
-            if cls:
-                for obj in self.__session.query(cls).all():
-                    key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                    dictionary[key] = obj
+            for obj in self.__session.query(cls).all():
+                key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                dictionary[key] = obj
         return dictionary
 
     def new(self, obj):

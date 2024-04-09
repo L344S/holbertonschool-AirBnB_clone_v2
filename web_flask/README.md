@@ -8,6 +8,11 @@ Flask is a micro-framework for Python based on Werkzeug and Jinja 2. It is desig
 - `0-hello_route.py`: A Python script that starts a Flask web application and defines a simple route.
 - `1-hbnb_route.py`: A Python script that defines multiple routes in a Flask application.
 - `2-c_route.py`: A Python script that uses variables in Flask routes.
+- `3-python_route.py`: A Python script that uses Python as a variable in Flask routes.
+- `4-number_route.py`: A Python script that uses a number as a variable in Flask routes.
+- `5-number_template.py`: A Python script that uses Flask's `render_template` to display a HTML page.
+- `6-number_odd_or_even.py`: A Python script that uses conditions in Flask templates.
+- `templates`: This directory contains the HTML templates that your Flask application uses. These templates are used by the `render_template` function to generate the HTML that is sent to the client.
 - `.gitignore`: A file that tells Git which files or directories to ignore.
 - `README.md`: This file, which provides an overview of the project.
 

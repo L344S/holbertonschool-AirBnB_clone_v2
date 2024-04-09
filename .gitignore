@@ -3,3 +3,7 @@ test_params_create
 file.json
 generate-authors.sh
 script.sh
+.vscode
+*.pyc
+venv/
+__pycache__/

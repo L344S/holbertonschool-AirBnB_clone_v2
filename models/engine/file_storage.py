@@ -13,7 +13,7 @@ class FileStorage:
         if cls:
             cls_objects = {}
             for key, value in FileStorage.__objects.items():
-                if cls == v.__class__:
+                if cls == value.__class__:
                     cls_objects[key] = value
             return cls_objects
         return FileStorage.__objects

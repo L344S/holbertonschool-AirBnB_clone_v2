@@ -8,3 +8,4 @@ script.sh
 venv/
 __pycache__/
 7-dump.sql
+100-hbnb.sql

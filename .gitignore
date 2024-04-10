@@ -7,3 +7,4 @@ script.sh
 *.pyc
 venv/
 __pycache__/
+7-dump.sql

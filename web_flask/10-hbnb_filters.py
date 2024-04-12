@@ -41,11 +41,9 @@ def display_states(id):
 
 @app.route("/hbnb_filters", strict_slashes=False)
 def hbnb_filters():
-    """Method to display all amenities and states in a HTML page"""
-    states_dict = storage.all(State)
-    amenities_dict = storage.all(Amenity)
-    states = list(states_dict.values())
-    amenities = list(amenities_dict.values())
+    """Method to display a HTML page with filters for places"""
+    states = storage.all(State).values()
+    amenities = storage.all(Amenity).values()
     return render_template(
         "10-hbnb_filters.html",
         states=states,
